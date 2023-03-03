@@ -1,6 +1,5 @@
 import json
 import os
-
 from googleapiclient.discovery import build
 
 
@@ -80,21 +79,29 @@ class Channel:
         with open(filename, 'w') as file:
             json.dump(data, file)
 
-        print(f"Data saved to {os.path.abspath(filename)}")
+        print(f"Data saved in {os.path.abspath(filename)}")
 
+    def __str__(self):
+        return f"YouTube channel: {self._title}"
 
-vdud = Channel('UCMCgOm8GZkHp8zJ6l7_hIuA')
+    def __repr__(self):
+        return f"Channel('{self._id}')"
 
-# get attribute values
-print(vdud.title)
-print(vdud.video_count)
-print(vdud.url)
+    def __add__(self, other):
+        return self._subscriber_count + other._subscriber_count
 
-# can't change
-# vdud.channel_id = 'New name'  # raises AttributeError
+    def __lt__(self, other):
+        return self._subscriber_count < other._subscriber_count
 
-# can get the object for working with API outside the class
-print(Channel.get_service())
+    def __gt__(self, other):
+        return self._subscriber_count > other._subscriber_count
 
-# create a 'vdud.json' file with channel data
-vdud.to_json('vdud.json')
+ch1 = Channel('vDud')
+ch2 = Channel('edit')
+
+print(ch1)  # YouTube channel: vDud
+print(ch2)  # YouTube channel: edit
+
+print(ch1 + ch2)  # 13940000
+
+print(ch1 < ch2)

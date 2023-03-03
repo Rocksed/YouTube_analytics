@@ -1,25 +1,33 @@
+import unittest
 from utils.main import Channel
 
 
-def test_Channel():
-    # Test creating a Channel object
-    c = Channel('UCMCgOm8GZkHp8zJ6l7_hIuA')
-    assert c.id == 'UCMCgOm8GZkHp8zJ6l7_hIuA'
-    assert c.name != ''
-    assert c.description != ''
-    assert c.views >= 0
-    assert c.subscribers >= 0
+class TestChannel(unittest.TestCase):
 
-    # Test getting data for a channel
-    c.get_data()
-    assert c.name != ''
-    assert c.description != ''
-    assert c.views >= 0
-    assert c.subscribers >= 0
+    def setUp(self):
+        self.ch1 = Channel('UC-lHJZR3Gqxm24_Vd_AJ5Yw')  # PewDiePie's channel ID
+        self.ch2 = Channel('UCiDJtJKMICpb9B1qf7qjEOA')  # T-Series' channel ID
 
-    # Test printing info for a channel
-    c.print_info()
-    # The print statements cannot be tested automatically, so we just need to make sure they don't raise an exception
+    def test_channel_info(self):
+        self.assertEqual(self.ch1.channel_id, 'UC-lHJZR3Gqxm24_Vd_AJ5Yw')
+        self.assertEqual(self.ch1.title, 'PewDiePie')
+        self.assertEqual(self.ch1.description, 'I make videos.')
+        self.assertEqual(self.ch1.url, 'https://www.youtube.com/channel/UC-lHJZR3Gqxm24_Vd_AJ5Yw')
+        self.assertGreater(self.ch1.subscriber_count, 100000)
+        self.assertGreater(self.ch1.video_count, 1000)
+        self.assertGreater(self.ch1.view_count, 10000000)
+
+    def test_channel_print(self):
+        self.assertEqual(str(self.ch1), 'Youtube-channel: PewDiePie')
+
+    def test_channel_addition(self):
+        total_subscribers = self.ch1.subscriber_count + self.ch2.subscriber_count
+        self.assertEqual(self.ch1 + self.ch2, total_subscribers)
+
+    def test_channel_comparison(self):
+        self.assertGreater(self.ch1, self.ch2)
+        self.assertLess(self.ch2, self.ch1)
 
 
-test_Channel()
+if __name__ == '__main__':
+    unittest.main()
