@@ -1,6 +1,7 @@
 import json
 import os
 from googleapiclient.discovery import build
+from dotenv import load_dotenv
 
 
 class Channel:
@@ -19,7 +20,8 @@ class Channel:
 
     @staticmethod
     def get_service():
-        api_key = 'your API'
+        load_dotenv()  # load API key from .env file
+        api_key = os.getenv('YOUTUBE_API_KEY')
         return build(Channel.YOUTUBE_API_SERVICE_NAME, Channel.YOUTUBE_API_VERSION, developerKey=api_key)
 
     @property
@@ -56,14 +58,16 @@ class Channel:
             part='snippet,statistics',
             id=self._id
         ).execute()
-        data = response['items'][0]
-
-        self._title = data['snippet']['title']
-        self._description = data['snippet']['description']
-        self._url = f"https://www.youtube.com/channel/{self._id}"
-        self._subscriber_count = int(data['statistics']['subscriberCount'])
-        self._video_count = int(data['statistics']['videoCount'])
-        self._view_count = int(data['statistics']['viewCount'])
+        if response.get('items'):
+            data = response['items'][0]
+            self._title = data['snippet']['title']
+            self._description = data['snippet']['description']
+            self._url = f"https://www.youtube.com/channel/{self._id}"
+            self._subscriber_count = int(data['statistics']['subscriberCount'])
+            self._video_count = int(data['statistics']['videoCount'])
+            self._view_count = int(data['statistics']['viewCount'])
+        else:
+            raise ValueError(f"No channel data found for channel ID {self._id}")
 
     def to_json(self, filename):
         data = {
@@ -95,6 +99,7 @@ class Channel:
 
     def __gt__(self, other):
         return self._subscriber_count > other._subscriber_count
+
 
 ch1 = Channel('vDud')
 ch2 = Channel('edit')
