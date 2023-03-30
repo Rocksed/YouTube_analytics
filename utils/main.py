@@ -14,7 +14,10 @@ class Video:
         self._view_count = None
         self._like_count = None
         self._duration = None
-        self._get_data()
+        try:
+            self._get_data()
+        except ValueError:
+            pass
 
     @staticmethod
     def get_service():
@@ -135,14 +138,8 @@ class PlayList:
         return best_video
 
 
-pl = PlayList('PLguYHBi01DWr4bRWc4uaguASmo7lW4GCb')
+broken_video = Video('broken_video_id')
+print(broken_video.title)
+print(broken_video.like_count)
 
-print(pl.title)
-print(pl.url)
 
-duration = pl.total_duration
-print(duration)
-print(type(duration))
-print(duration.total_seconds())
-
-print(pl.show_best_video())
